@@ -1,6 +1,6 @@
 # backctl
 
-A command-line interface for interacting with Backstage REST APIs.
+A CLI and MCP server that gives developers and AI assistants fast, unified access to Backstage from your terminal or any MCP-compatible tool.
 
 ## Installation
 
