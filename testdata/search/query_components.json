@@ -1,0 +1,31 @@
+{
+  "results": [
+    {
+      "type": "software-catalog",
+      "document": {
+        "title": "payment-service",
+        "text": "Payment processing service handling transactions and refunds",
+        "location": "/catalog/default/component/payment-service",
+        "kind": "Component",
+        "namespace": "default",
+        "name": "payment-service",
+        "lifecycle": "production",
+        "owner": "group:default/team-payments"
+      }
+    },
+    {
+      "type": "software-catalog",
+      "document": {
+        "title": "checkout-service",
+        "text": "Checkout orchestration service managing cart and order flow",
+        "location": "/catalog/default/component/checkout-service",
+        "kind": "Component",
+        "namespace": "default",
+        "name": "checkout-service",
+        "lifecycle": "production",
+        "owner": "group:default/team-checkout"
+      }
+    }
+  ],
+  "numberOfResults": 2
+}

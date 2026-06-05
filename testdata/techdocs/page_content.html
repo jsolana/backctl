@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="utf-8"><title>Getting Started - Payment Service</title></head>
+<body>
+<nav>
+  <ul>
+    <li><a href="index.html">Home</a></li>
+    <li><a href="getting-started.html">Getting Started</a></li>
+    <li><a href="api-reference.html">API Reference</a></li>
+  </ul>
+</nav>
+<header>
+  <h1>Payment Service Documentation</h1>
+</header>
+<main>
+  <article>
+    <h1>Getting Started</h1>
+    <p>This guide covers how to set up and run the payment service locally.</p>
+
+    <h2>Prerequisites</h2>
+    <p>Before you begin, ensure you have the following installed:</p>
+    <ul>
+      <li>Go 1.22 or later</li>
+      <li>PostgreSQL 15+</li>
+      <li>Docker (optional, for containerized development)</li>
+    </ul>
+
+    <h2>Installation</h2>
+    <p>Clone the repository and install dependencies:</p>
+    <pre><code>git clone https://github.com/org/payment-service.git
+cd payment-service
+go mod download</code></pre>
+
+    <h2>Configuration</h2>
+    <p>Copy the example configuration and update it with your local settings:</p>
+    <pre><code>cp config.example.yaml config.yaml</code></pre>
+    <p>The service requires a PostgreSQL connection string and API keys for downstream services.</p>
+
+    <h2>Running the Service</h2>
+    <p>Start the service in development mode:</p>
+    <pre><code>go run ./cmd/server --config config.yaml</code></pre>
+    <p>The service will be available at <code>http://localhost:8080</code>.</p>
+  </article>
+</main>
+<footer>
+  <p>Built with MkDocs and TechDocs</p>
+</footer>
+</body>
+</html>

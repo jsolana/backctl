@@ -1,0 +1,311 @@
+# backctl
+
+A command-line interface for interacting with Backstage REST APIs.
+
+## Installation
+
+### Quick install (remote)
+
+```sh
+curl -sSfL https://raw.githubusercontent.com/jsolana/backctl/main/install.sh | bash
+```
+
+Install a specific version:
+
+```sh
+curl -sSfL https://raw.githubusercontent.com/jsolana/backctl/main/install.sh | bash -s -- -v v0.1.0
+```
+
+Install to a custom directory (no sudo required):
+
+```sh
+curl -sSfL https://raw.githubusercontent.com/jsolana/backctl/main/install.sh | bash -s -- -d ~/.local/bin
+```
+
+### Using go install
+
+```sh
+go install github.com/jsolana/backctl/cmd/backctl@latest
+```
+
+### From source
+
+```sh
+git clone https://github.com/jsolana/backctl.git
+cd backctl
+make build
+./bin/backctl --help
+```
+
+### Install script options
+
+```console
+Usage: install.sh [OPTIONS]
+
+Options:
+  -v, --version TAG    Install a specific version/tag (default: latest)
+  -p, --path DIR       Build from a local checkout instead of cloning
+  -d, --dir DIR        Installation directory (default: /usr/local/bin)
+  -h, --help           Show this help
+```
+
+## Quick Start
+
+```sh
+# Point backctl at your Backstage instance
+export BACKSTAGE_URL=https://backstage.example.com
+
+# List all components
+backctl catalog list --kind component
+
+# Get a specific entity
+backctl catalog get component:default/my-service
+```
+
+## Entity Ref Format
+
+Backstage identifies entities using the format `kind:[namespace/]name`. When namespace is omitted, it defaults to `default` (or the value of `BACKSTAGE_NAMESPACE` if set).
+
+Examples:
+
+- `component:my-service` resolves to `component:default/my-service`
+- `component:platform/my-service` uses namespace `platform` explicitly
+- `api:default/my-api`
+
+## Configuration
+
+### Config file
+
+backctl loads settings from `~/.config/backctl/config.yaml` (or `$XDG_CONFIG_HOME/backctl/config.yaml`). You can override the path with `--config`.
+
+Example `config.yaml`:
+
+```yaml
+base_url: https://backstage.example.com
+token_file: ~/.config/backctl/token
+namespace: default
+output: json
+timeout: 30s
+no_auth: false
+verbose: false
+```
+
+### Precedence
+
+Values are resolved in this order (first wins):
+
+1. Explicit CLI flag (`--base-url`, `--namespace`, etc.)
+2. Environment variable (`BACKSTAGE_URL`, `BACKSTAGE_NAMESPACE`, `BACKSTAGE_TOKEN`)
+3. Config file (`~/.config/backctl/config.yaml`)
+4. Hardcoded default
+
+### Environment variables and flags
+
+| Variable / Flag | Config key | Description | Default |
+|-----------------|------------|-------------|---------|
+| `BACKSTAGE_URL` / `--base-url` | `base_url` | Base URL of the Backstage instance | (required) |
+| `BACKSTAGE_TOKEN` | — | Bearer token for authentication | |
+| — / `--token-file` | `token_file` | Path to a file containing the bearer token | |
+| `BACKSTAGE_NAMESPACE` / `-n` | `namespace` | Default namespace for entity refs | `default` |
+| — / `--timeout` | `timeout` | HTTP request timeout | `30s` |
+| — / `-o` | `output` | Output format (table, json, yaml) | table |
+| — / `--no-auth` | `no_auth` | Disable authentication entirely | `false` |
+| — / `-v` | `verbose` | Verbose output to stderr | `false` |
+
+## Commands
+
+### catalog
+
+Interact with the Backstage Software Catalog.
+
+- `catalog list` - List entities with optional kind/filter (supports cursor pagination with `--after`)
+- `catalog get <ref>` - Get a single entity by ref
+- `catalog ancestry <ref>` - Show entity provenance chain (how it arrived in the catalog)
+- `catalog validate -f <file>` - Validate an entity definition without registering it
+- `catalog refresh <ref>` - Trigger immediate re-ingestion of an entity (write operation)
+- `catalog facets` - List available facets and their values
+
+### search
+
+- `search <term>` - Search the Backstage catalog by term
+
+### techdocs
+
+Access TechDocs documentation.
+
+- `techdocs get <ref> [path]` - Retrieve rendered documentation page
+- `techdocs list-pages <ref>` - List available pages (table of contents)
+- `techdocs metadata <ref>` - Get TechDocs metadata for an entity
+- `techdocs entity <ref>` - Get the TechDocs entity descriptor
+
+### relations
+
+Explore entity relationships (enriched with owner, lifecycle, and tier metadata).
+
+- `relations tree <ref>` - Display entity relationship tree
+- `relations list <ref>` - List direct relations for an entity
+
+### locations
+
+Query catalog locations.
+
+- `locations list` - List all registered locations
+- `locations get <id>` - Get a location by ID
+
+### completion
+
+Generate shell completion scripts.
+
+- `completion bash` - Bash completions
+- `completion zsh` - Zsh completions
+- `completion fish` - Fish completions
+- `completion powershell` - PowerShell completions
+
+Setup examples:
+
+```sh
+# Zsh (add to ~/.zshrc)
+source <(backctl completion zsh)
+
+# Bash
+source <(backctl completion bash)
+
+# Fish
+backctl completion fish | source
+```
+
+### version
+
+- `version` - Print version, commit, and build date
+
+## MCP Integration
+
+backctl includes `backctl-mcp`, a Model Context Protocol server that exposes the Backstage catalog to AI agents (Cursor, Claude Desktop, etc.) via stdio transport. It runs as a Docker container for sandboxed execution.
+
+### Building the Docker image
+
+```sh
+make docker-build
+```
+
+This produces a `backctl-mcp:latest` image (~15MB) containing both the MCP server and the `backctl` binary.
+
+### MCP Configuration
+
+The MCP server is configured entirely through environment variables:
+
+| Variable | Required | Description |
+|----------|----------|-------------|
+| `BACKSTAGE_URL` | Yes | Base URL of the Backstage instance (e.g. `https://backstage.example.com`) |
+| `BACKSTAGE_TOKEN` | No | Bearer token for Backstage API authentication |
+| `BACKSTAGE_TIMEOUT` | No | HTTP request timeout (default: `30s`) |
+
+### IDE configuration (Cursor)
+
+Add the following to your MCP settings (`.cursor/mcp.json` or global settings):
+
+```json
+{
+  "mcpServers": {
+    "backstage": {
+      "command": "docker",
+      "args": [
+        "run", "--rm", "-i",
+        "-e", "BACKSTAGE_URL",
+        "-e", "BACKSTAGE_TOKEN",
+        "backctl-mcp:latest"
+      ],
+      "transportType": "stdio"
+    }
+  }
+}
+```
+
+The `-e BACKSTAGE_URL` / `-e BACKSTAGE_TOKEN` flags forward the host environment variables into the container. Ensure they are set in your shell before launching the IDE, or replace them with explicit values:
+
+```json
+{
+  "mcpServers": {
+    "backstage": {
+      "command": "docker",
+      "args": [
+        "run", "--rm", "-i",
+        "-e", "BACKSTAGE_URL=https://backstage.example.com",
+        "-e", "BACKSTAGE_TOKEN=your-token-here",
+        "backctl-mcp:latest"
+      ],
+      "transportType": "stdio"
+    }
+  }
+}
+```
+
+### Available tools
+
+| Tool | Description |
+|------|-------------|
+| `search` | Free-text search across catalog entities and TechDocs |
+| `get_entity` | Get full entity details by ref (metadata, spec, relations) |
+| `get_relationships` | Traverse the dependency graph from an entity |
+| `get_techdocs_page` | Fetch rendered documentation page as plain text |
+| `list_entities` | List/filter catalog entities by kind and spec fields |
+| `list_techdocs_pages` | List available documentation pages (table of contents) |
+| `execute` | Run any backctl subcommand (escape hatch for advanced queries) |
+
+### Example agent interaction
+
+```text
+Developer: "I need to subscribe to the journey finished event. How do I do it?"
+
+Agent calls: search(query: "journey finished event asyncapi")
+Agent calls: get_entity(ref: "api:driver-journeys/journey-events-v1")
+Agent calls: get_relationships(ref: "component:default/my-service", depth: 2)
+Agent calls: get_techdocs_page(ref: "component:dev-x/cax", path: "subscriptions")
+```
+
+### Running without Docker
+
+For local development, you can run the MCP server directly:
+
+```sh
+make build-mcp
+BACKSTAGE_URL=https://backstage.example.com BACKSTAGE_TOKEN=xxx ./bin/backctl-mcp
+```
+
+## Pending / Roadmap
+
+The following areas are not yet covered:
+
+**Write operationsd**:
+
+- Entity creation (POST /entities)
+- Entity deletion (DELETE /entities/by-uid)
+- Location creation (POST /catalog/locations)
+- Location deletion (DELETE /catalog/locations/:id)
+
+**TechDocs**:
+
+- Sync status endpoint
+
+**Search**:
+
+- (Nice to have) No semantic search (not available in Backstage OSS)
+
+**APIs not yet implemented**:
+
+- Scaffolder API (software templates listing, task creation, task logs)
+- Permissions API (authorization decision queries)
+- Kubernetes proxy API
+- Events/webhooks API
+
+**Client improvements**:
+
+- Cache persistence to disk for cross-invocation reuse
+
+**Agent integration** (https://backstage.io/docs/ai/skills):
+
+- Create a Cursor Skill backed by the CLI to enable agents to resolve common workflows (e.g. "find the owner of a service", "discover APIs consumed by a component", "locate relevant TechDocs for onboarding")
+
+## Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for development setup, testing instructions, and release process.

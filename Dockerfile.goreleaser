@@ -1,0 +1,6 @@
+FROM alpine:3.23
+RUN apk add --no-cache ca-certificates
+ARG TARGETPLATFORM
+COPY ${TARGETPLATFORM}/backctl-mcp /usr/local/bin/backctl-mcp
+COPY ${TARGETPLATFORM}/backctl /usr/local/bin/backctl
+ENTRYPOINT ["backctl-mcp"]

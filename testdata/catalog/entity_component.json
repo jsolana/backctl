@@ -1,0 +1,35 @@
+{
+  "apiVersion": "backstage.io/v1alpha1",
+  "kind": "Component",
+  "metadata": {
+    "uid": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+    "etag": "abc123",
+    "name": "payment-service",
+    "namespace": "default",
+    "description": "Payment processing service",
+    "annotations": {
+      "backstage.io/techdocs-ref": "dir:.",
+      "backstage.io/managed-by-location": "url:https://github.com/org/repo/blob/main/catalog-info.yaml"
+    },
+    "tags": ["payments", "go"],
+    "links": [
+      {"url": "https://dashboard.example.com/payment-service", "title": "Dashboard", "icon": "dashboard"}
+    ]
+  },
+  "spec": {
+    "type": "service",
+    "lifecycle": "production",
+    "owner": "group:default/team-payments",
+    "system": "system:default/payments",
+    "dependsOn": ["resource:default/payments-db"],
+    "providesApis": ["api:default/payment-api"],
+    "consumesApis": ["api:default/identity-api"]
+  },
+  "relations": [
+    {"type": "ownedBy", "targetRef": "group:default/team-payments", "target": {"kind": "Group", "namespace": "default", "name": "team-payments"}},
+    {"type": "dependsOn", "targetRef": "resource:default/payments-db", "target": {"kind": "Resource", "namespace": "default", "name": "payments-db"}},
+    {"type": "providesApi", "targetRef": "api:default/payment-api", "target": {"kind": "API", "namespace": "default", "name": "payment-api"}},
+    {"type": "consumesApi", "targetRef": "api:default/identity-api", "target": {"kind": "API", "namespace": "default", "name": "identity-api"}},
+    {"type": "partOf", "targetRef": "system:default/payments", "target": {"kind": "System", "namespace": "default", "name": "payments"}}
+  ]
+}

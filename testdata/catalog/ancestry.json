@@ -1,0 +1,54 @@
+{
+  "rootEntityRef": "component:default/payment-service",
+  "items": [
+    {
+      "entity": {
+        "apiVersion": "backstage.io/v1alpha1",
+        "kind": "Component",
+        "metadata": {
+          "uid": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+          "name": "payment-service",
+          "namespace": "default"
+        },
+        "spec": {
+          "type": "service",
+          "lifecycle": "production",
+          "owner": "group:default/team-payments"
+        }
+      },
+      "parentEntityRefs": ["location:default/generated-abc123"]
+    },
+    {
+      "entity": {
+        "apiVersion": "backstage.io/v1alpha1",
+        "kind": "Location",
+        "metadata": {
+          "uid": "loc-generated-abc123",
+          "name": "generated-abc123",
+          "namespace": "default"
+        },
+        "spec": {
+          "type": "url",
+          "target": "https://github.com/org/repo/blob/main/catalog-info.yaml"
+        }
+      },
+      "parentEntityRefs": ["location:default/bootstrap-github-org"]
+    },
+    {
+      "entity": {
+        "apiVersion": "backstage.io/v1alpha1",
+        "kind": "Location",
+        "metadata": {
+          "uid": "loc-bootstrap-github-org",
+          "name": "bootstrap-github-org",
+          "namespace": "default"
+        },
+        "spec": {
+          "type": "url",
+          "target": "https://github.com/org/repo"
+        }
+      },
+      "parentEntityRefs": []
+    }
+  ]
+}

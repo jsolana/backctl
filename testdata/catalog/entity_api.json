@@ -1,0 +1,23 @@
+{
+  "apiVersion": "backstage.io/v1alpha1",
+  "kind": "API",
+  "metadata": {
+    "uid": "b2c3d4e5-f6a7-8901-bcde-f12345678901",
+    "etag": "def456",
+    "name": "payment-api",
+    "namespace": "default",
+    "description": "Payment processing API"
+  },
+  "spec": {
+    "type": "openapi",
+    "lifecycle": "production",
+    "owner": "group:default/team-payments",
+    "system": "system:default/payments",
+    "definition": "openapi: 3.0.0\ninfo:\n  title: Payment API\n  version: 1.0.0"
+  },
+  "relations": [
+    {"type": "ownedBy", "targetRef": "group:default/team-payments", "target": {"kind": "Group", "namespace": "default", "name": "team-payments"}},
+    {"type": "apiProvidedBy", "targetRef": "component:default/payment-service", "target": {"kind": "Component", "namespace": "default", "name": "payment-service"}},
+    {"type": "partOf", "targetRef": "system:default/payments", "target": {"kind": "System", "namespace": "default", "name": "payments"}}
+  ]
+}

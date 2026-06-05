@@ -1,0 +1,33 @@
+{
+  "config": {
+    "lang": ["en"],
+    "separator": "[\\s\\-]+"
+  },
+  "docs": [
+    {
+      "location": "",
+      "title": "Home",
+      "text": "Welcome to Payment Service documentation"
+    },
+    {
+      "location": "getting-started/",
+      "title": "Getting Started",
+      "text": "How to get started with the payment service"
+    },
+    {
+      "location": "guides/integration/",
+      "title": "Integration Guide",
+      "text": "Step by step guide for integrating with the payment API"
+    },
+    {
+      "location": "architecture/adr-001/",
+      "title": "ADR-001: Event Schema",
+      "text": "Architecture decision record for event schema format"
+    },
+    {
+      "location": "runbooks/on-call/",
+      "title": "On-Call Runbook",
+      "text": "Procedures for handling payment service incidents"
+    }
+  ]
+}

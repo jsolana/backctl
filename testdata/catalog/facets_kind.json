@@ -1,0 +1,10 @@
+{
+  "facets": {
+    "kind": [
+      {"value": "Component", "count": 45},
+      {"value": "API", "count": 23},
+      {"value": "System", "count": 12},
+      {"value": "Resource", "count": 8}
+    ]
+  }
+}

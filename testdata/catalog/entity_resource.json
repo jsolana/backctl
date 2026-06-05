@@ -1,0 +1,21 @@
+{
+  "apiVersion": "backstage.io/v1alpha1",
+  "kind": "Resource",
+  "metadata": {
+    "uid": "c3d4e5f6-a7b8-9012-cdef-123456789012",
+    "etag": "ghi789",
+    "name": "payments-db",
+    "namespace": "default",
+    "description": "PostgreSQL database for payment data"
+  },
+  "spec": {
+    "type": "database",
+    "owner": "group:default/team-payments",
+    "system": "system:default/payments"
+  },
+  "relations": [
+    {"type": "ownedBy", "targetRef": "group:default/team-payments", "target": {"kind": "Group", "namespace": "default", "name": "team-payments"}},
+    {"type": "dependencyOf", "targetRef": "component:default/payment-service", "target": {"kind": "Component", "namespace": "default", "name": "payment-service"}},
+    {"type": "partOf", "targetRef": "system:default/payments", "target": {"kind": "System", "namespace": "default", "name": "payments"}}
+  ]
+}
