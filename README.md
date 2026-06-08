@@ -285,17 +285,6 @@ Ensure `BACKSTAGE_URL` and `BACKSTAGE_TOKEN` are set in your shell before launch
 | `list_techdocs_pages` | List available documentation pages (table of contents) |
 | `execute` | Run any backctl subcommand (escape hatch for advanced queries) |
 
-### Example agent interaction
-
-```text
-Developer: "I need to subscribe to the journey finished event. How do I do it?"
-
-Agent calls: search(query: "journey finished event asyncapi")
-Agent calls: get_entity(ref: "api:driver-journeys/journey-events-v1")
-Agent calls: get_relationships(ref: "component:default/my-service", depth: 2)
-Agent calls: get_techdocs_page(ref: "component:dev-x/cax", path: "subscriptions")
-```
-
 ### Running without Docker
 
 For local development, you can run the MCP server directly:
