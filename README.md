@@ -209,14 +209,6 @@ backctl completion fish | source
 
 backctl includes `backctl-mcp`, a Model Context Protocol server that exposes the Backstage catalog to AI agents (Cursor, Claude Desktop, etc.) via stdio transport. It runs as a Docker container for sandboxed execution.
 
-### One-click install
-
-Add the `backctl-mcp` server to Cursor in one click:
-
-[![Install in Cursor](https://cursor.com/deeplink/mcp-install-dark.svg)](https://cursor.com/install-mcp?name=backstage&config=eyJjb21tYW5kIjoiZG9ja2VyIiwiYXJncyI6WyJydW4iLCItLXJtIiwiLWkiLCItZSIsIkJBQ0tTVEFHRV9VUkwiLCItZSIsIkJBQ0tTVEFHRV9UT0tFTiIsImdoY3IuaW8vanNvbGFuYS9iYWNrY3RsLW1jcDpsYXRlc3QiXSwiZW52Ijp7IkJBQ0tTVEFHRV9VUkwiOiJodHRwczovL2JhY2tzdGFnZS5leGFtcGxlLmNvbSIsIkJBQ0tTVEFHRV9UT0tFTiI6InlvdXItdG9rZW4taGVyZSJ9fQ==)
-
-> **Note:** After clicking, update `BACKSTAGE_URL` and `BACKSTAGE_TOKEN` in your Cursor MCP settings with your actual Backstage instance URL and token.
-
 ### Building the Docker image
 
 ```sh
