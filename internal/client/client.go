@@ -36,8 +36,9 @@ func (c *Config) defaults() {
 // TODO: Replace sync.Map-based cache with a bounded LRU to prevent unbounded
 // memory growth in long-running MCP server sessions.
 type etagEntry struct {
-	etag string
-	body []byte
+	etag   string
+	body   []byte
+	header http.Header
 }
 
 type Client struct {
@@ -115,7 +116,7 @@ func (c *Client) do(ctx context.Context, method, path string, query url.Values, 
 			cached := entry.(*etagEntry)
 			return &http.Response{
 				StatusCode: http.StatusOK,
-				Header:     resp.Header,
+				Header:     cached.header,
 				Body:       io.NopCloser(bytes.NewReader(cached.body)),
 			}, nil
 		}
@@ -133,7 +134,7 @@ func (c *Client) do(ctx context.Context, method, path string, query url.Values, 
 			if readErr != nil {
 				return nil, readErr
 			}
-			c.cache.Store(cacheKey, &etagEntry{etag: etag, body: bodyBytes})
+			c.cache.Store(cacheKey, &etagEntry{etag: etag, body: bodyBytes, header: resp.Header.Clone()})
 			resp.Body = io.NopCloser(bytes.NewReader(bodyBytes))
 		}
 	}
