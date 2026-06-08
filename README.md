@@ -2,6 +2,33 @@
 
 A CLI and MCP server that gives developers and AI assistants fast, unified access to Backstage from your terminal or any MCP-compatible tool.
 
+## Why does this exist?
+
+Backstage is a powerful developer portal — but its value is locked inside a web UI. There is no first-class way to query your catalog, browse TechDocs, or traverse service dependencies from a terminal or an AI agent.
+
+**backctl closes that gap.**
+
+It exposes the full Backstage API surface as a CLI you can script, pipe, and automate and as an MCP server that any AI assistant (Cursor, Claude, OpenCode, etc.) can call directly during agentic workflows. No more copy-pasting URLs or tab-switching mid-task.
+
+## Who is this for?
+
+| Persona | How backctl helps |
+|---------|-------------------|
+| **Platform engineers** | Inspect, validate, and refresh catalog entries without touching the UI |
+| **Backend / full-stack developers** | Discover APIs, owners, and dependencies of any service in seconds |
+| **AI agents / coding assistants** | Query live catalog data, resolve entity refs, and retrieve TechDocs inline while generating or reviewing code |
+| **DevOps / SRE** | Script catalog queries in CI pipelines and runbooks |
+
+## What problem does it eliminate?
+
+The developer portal holds authoritative information: service ownership, API contracts, dependency graphs, TechDocs, but none of it is reachable from the command line or from an AI assistant.
+
+This creates friction at exactly the wrong moment: when a developer or an agent is already in a flow and needs one answer to continue. The typical workarounds (opening a browser, searching the UI, copy-pasting a JSON blob) break concentration and slow down iteration.
+
+**backctl removes that interruption** by making the full Backstage catalog a first-class citizen in your terminal and in agentic workflows.
+
+**Let your AI agent do it**: add the MCP server once and it can answer questions like *"who owns the x-events API?"* or *"what services consume my component?"* without leaving the chat.
+
 ## Installation
 
 ### Quick install (remote)
@@ -181,6 +208,14 @@ backctl completion fish | source
 ## MCP Integration
 
 backctl includes `backctl-mcp`, a Model Context Protocol server that exposes the Backstage catalog to AI agents (Cursor, Claude Desktop, etc.) via stdio transport. It runs as a Docker container for sandboxed execution.
+
+### One-click install
+
+Add the `backctl-mcp` server to Cursor in one click:
+
+[![Install in Cursor](https://cursor.com/deeplink/mcp-install-dark.svg)](https://cursor.com/install-mcp?name=backstage&config=eyJjb21tYW5kIjoiZG9ja2VyIiwiYXJncyI6WyJydW4iLCItLXJtIiwiLWkiLCItZSIsIkJBQ0tTVEFHRV9VUkwiLCItZSIsIkJBQ0tTVEFHRV9UT0tFTiIsImdoY3IuaW8vanNvbGFuYS9iYWNrY3RsLW1jcDpsYXRlc3QiXSwiZW52Ijp7IkJBQ0tTVEFHRV9VUkwiOiJodHRwczovL2JhY2tzdGFnZS5leGFtcGxlLmNvbSIsIkJBQ0tTVEFHRV9UT0tFTiI6InlvdXItdG9rZW4taGVyZSJ9fQ==)
+
+> **Note:** After clicking, update `BACKSTAGE_URL` and `BACKSTAGE_TOKEN` in your Cursor MCP settings with your actual Backstage instance URL and token.
 
 ### Building the Docker image
 
