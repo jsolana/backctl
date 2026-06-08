@@ -217,7 +217,7 @@ backctl includes `backctl-mcp`, a Model Context Protocol server that exposes the
 
 Add the `backctl-mcp` server to Cursor in one click:
 
-[![Add to Cursor](https://cursor.com/deeplink/mcp-install-dark.svg)](https://cursor.com/es/install-mcp?name=backctl-mcp&config=eyJ0cmFuc3BvcnRUeXBlIjoic3RkaW8iLCJjb21tYW5kIjoiZG9ja2VyIHJ1biAtLXJtIC1pIC1lIEJBQ0tTVEFHRV9VUkw9aHR0cHM6Ly9kZW1vLmJhY2tzdGFnZS5pbyBnaGNyLmlvL2pzb2xhbmEvYmFja2N0bC1tY3A6MC4xLjEifQ%3D%3D)
+[![Add to Cursor](https://cursor.com/deeplink/mcp-install-dark.svg)](cursor://anysphere.cursor-deeplink/mcp/install?name=backctl-mcp&config=eyJjb21tYW5kIjoiZG9ja2VyIiwiYXJncyI6WyJydW4iLCItLXJtIiwiLWkiLCItZSIsIkJBQ0tTVEFHRV9VUkw9aHR0cHM6Ly9kZW1vLmJhY2tzdGFnZS5pbyIsImdoY3IuaW8vanNvbGFuYS9iYWNrY3RsLW1jcDpsYXRlc3QiXX0=)
 
 > **Note:** After clicking, update `BACKSTAGE_URL` and `BACKSTAGE_TOKEN` in your Cursor MCP settings with your actual Backstage instance URL and token.
 
@@ -246,38 +246,40 @@ Add the following to your MCP settings (`.cursor/mcp.json` or global settings):
 ```json
 {
   "mcpServers": {
-    "backstage": {
-      "command": "docker",
-      "args": [
-        "run", "--rm", "-i",
-        "-e", "BACKSTAGE_URL",
-        "-e", "BACKSTAGE_TOKEN",
-        "backctl-mcp:latest"
-      ],
-      "transportType": "stdio"
-    }
-  }
-}
-```
-
-The `-e BACKSTAGE_URL` / `-e BACKSTAGE_TOKEN` flags forward the host environment variables into the container. Ensure they are set in your shell before launching the IDE, or replace them with explicit values:
-
-```json
-{
-  "mcpServers": {
-    "backstage": {
+    "backctl-mcp": {
       "command": "docker",
       "args": [
         "run", "--rm", "-i",
         "-e", "BACKSTAGE_URL=https://backstage.example.com",
         "-e", "BACKSTAGE_TOKEN=your-token-here",
-        "backctl-mcp:latest"
+        "ghcr.io/jsolana/backctl-mcp:0.1.1"
       ],
       "transportType": "stdio"
     }
   }
 }
 ```
+
+Alternatively, forward the variables from your shell environment instead of hardcoding them:
+
+```json
+{
+  "mcpServers": {
+    "backctl-mcp": {
+      "command": "docker",
+      "args": [
+        "run", "--rm", "-i",
+        "-e", "BACKSTAGE_URL",
+        "-e", "BACKSTAGE_TOKEN",
+        "ghcr.io/jsolana/backctl-mcp:0.1.1"
+      ],
+      "transportType": "stdio"
+    }
+  }
+}
+```
+
+Ensure `BACKSTAGE_URL` and `BACKSTAGE_TOKEN` are set in your shell before launching the IDE.
 
 ### Available tools
 
