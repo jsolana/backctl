@@ -16,6 +16,14 @@ import (
 	"github.com/mark3labs/mcp-go/mcp"
 )
 
+const (
+	defaultListEntitiesLimit = 50
+	maxListEntitiesLimit     = 200
+
+	defaultRelationshipDepth = 3
+	maxRelationshipDepth     = 5
+)
+
 type handlers struct {
 	catalog  *backstage.CatalogService
 	search   *backstage.SearchService
@@ -88,14 +96,14 @@ func (h *handlers) handleGetRelationships(ctx context.Context, req mcp.CallToolR
 	}
 
 	opts := resolver.Options{
-		Depth:     3,
+		Depth:     defaultRelationshipDepth,
 		Direction: "outbound",
 	}
 
 	if depth, ok := req.GetArguments()["depth"].(float64); ok && depth > 0 {
 		opts.Depth = int(depth)
-		if opts.Depth > 5 {
-			opts.Depth = 5
+		if opts.Depth > maxRelationshipDepth {
+			opts.Depth = maxRelationshipDepth
 		}
 	}
 
@@ -150,7 +158,7 @@ func (h *handlers) handleGetTechDocsPage(ctx context.Context, req mcp.CallToolRe
 
 func (h *handlers) handleListEntities(ctx context.Context, req mcp.CallToolRequest) (*mcp.CallToolResult, error) {
 	opts := backstage.ListEntitiesOptions{
-		Limit: 50,
+		Limit: defaultListEntitiesLimit,
 	}
 
 	var filters []string
@@ -167,10 +175,14 @@ func (h *handlers) handleListEntities(ctx context.Context, req mcp.CallToolReque
 
 	if limit, ok := req.GetArguments()["limit"].(float64); ok && limit > 0 {
 		l := int(limit)
-		if l > 200 {
-			l = 200
+		if l > maxListEntitiesLimit {
+			l = maxListEntitiesLimit
 		}
 		opts.Limit = l
+	}
+
+	if cursor, err := req.RequireString("cursor"); err == nil && cursor != "" {
+		opts.After = cursor
 	}
 
 	result, err := h.catalog.ListEntities(ctx, opts)
