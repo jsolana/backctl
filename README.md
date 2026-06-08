@@ -209,6 +209,10 @@ backctl completion fish | source
 
 backctl includes `backctl-mcp`, a Model Context Protocol server that exposes the Backstage catalog to AI agents (Cursor, Claude Desktop, etc.) via stdio transport. It runs as a Docker container for sandboxed execution.
 
+<div align="center">
+  <img src="./docs/assets/mcp-demo.gif" alt="mcp backctl demo" width="400" heigh="600" />
+</div>
+
 ### Building the Docker image
 
 ```sh
@@ -234,38 +238,40 @@ Add the following to your MCP settings (`.cursor/mcp.json` or global settings):
 ```json
 {
   "mcpServers": {
-    "backstage": {
-      "command": "docker",
-      "args": [
-        "run", "--rm", "-i",
-        "-e", "BACKSTAGE_URL",
-        "-e", "BACKSTAGE_TOKEN",
-        "backctl-mcp:latest"
-      ],
-      "transportType": "stdio"
-    }
-  }
-}
-```
-
-The `-e BACKSTAGE_URL` / `-e BACKSTAGE_TOKEN` flags forward the host environment variables into the container. Ensure they are set in your shell before launching the IDE, or replace them with explicit values:
-
-```json
-{
-  "mcpServers": {
-    "backstage": {
+    "backctl-mcp": {
       "command": "docker",
       "args": [
         "run", "--rm", "-i",
         "-e", "BACKSTAGE_URL=https://backstage.example.com",
         "-e", "BACKSTAGE_TOKEN=your-token-here",
-        "backctl-mcp:latest"
+        "ghcr.io/jsolana/backctl-mcp:0.1.1"
       ],
       "transportType": "stdio"
     }
   }
 }
 ```
+
+Alternatively, forward the variables from your shell environment instead of hardcoding them:
+
+```json
+{
+  "mcpServers": {
+    "backctl-mcp": {
+      "command": "docker",
+      "args": [
+        "run", "--rm", "-i",
+        "-e", "BACKSTAGE_URL",
+        "-e", "BACKSTAGE_TOKEN",
+        "ghcr.io/jsolana/backctl-mcp:0.1.1"
+      ],
+      "transportType": "stdio"
+    }
+  }
+}
+```
+
+Ensure `BACKSTAGE_URL` and `BACKSTAGE_TOKEN` are set in your shell before launching the IDE.
 
 ### Available tools
 
