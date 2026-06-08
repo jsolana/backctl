@@ -209,7 +209,9 @@ backctl completion fish | source
 
 backctl includes `backctl-mcp`, a Model Context Protocol server that exposes the Backstage catalog to AI agents (Cursor, Claude Desktop, etc.) via stdio transport. It runs as a Docker container for sandboxed execution.
 
-![mcp demo](docs/assets/mcp-demo.gif)
+<div align="center">
+  <img src="./docs/assets/mcp-demo.gif" alt="mcp backctl demo" width="800" />
+</div>
 
 ### One-click install
 
