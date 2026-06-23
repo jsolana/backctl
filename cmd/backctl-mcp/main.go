@@ -45,8 +45,24 @@ func main() {
 
 	s := mcpserver.NewServer(httpClient, version)
 
-	if err := server.ServeStdio(s); err != nil {
-		fmt.Fprintf(os.Stderr, "server error: %v\n", err)
-		os.Exit(1)
+	switch os.Getenv("MCP_TRANSPORT") {
+	case "http":
+		addr := os.Getenv("MCP_HTTP_ADDR")
+		if addr == "" {
+			addr = ":8080"
+		}
+		httpServer := server.NewStreamableHTTPServer(s,
+			server.WithEndpointPath("/mcp"),
+			server.WithStateLess(true),
+		)
+		log.Printf("backctl-mcp listening on %s/mcp", addr)
+		if err := httpServer.Start(addr); err != nil {
+			log.Fatalf("server error: %v", err)
+		}
+	default:
+		if err := server.ServeStdio(s); err != nil {
+			fmt.Fprintf(os.Stderr, "server error: %v\n", err)
+			os.Exit(1)
+		}
 	}
 }
