@@ -98,7 +98,7 @@ func getTechDocsPageTool() mcplib.Tool {
 
 func listEntitiesTool() mcplib.Tool {
 	return mcplib.NewTool("list_entities",
-		mcplib.WithDescription("List and filter entities in the Backstage catalog. Supports filtering by kind, spec fields, and other metadata."),
+		mcplib.WithDescription("List and filter entities in the Backstage catalog. Supports filtering by kind, spec fields, and other metadata. Use nextCursor from the response with the cursor parameter to paginate through large result sets."),
 		mcplib.WithString("kind",
 			mcplib.Description("Filter by entity kind: Component, API, System, Domain, Resource, Group, User"),
 		),
@@ -107,6 +107,9 @@ func listEntitiesTool() mcplib.Tool {
 		),
 		mcplib.WithNumber("limit",
 			mcplib.Description("Maximum number of entities to return (default: 50, max: 200)"),
+		),
+		mcplib.WithString("cursor",
+			mcplib.Description("Pagination cursor from the nextCursor field of a previous response. Omit to start from the beginning."),
 		),
 	)
 }
@@ -123,7 +126,7 @@ func listTechDocsPagesTool() mcplib.Tool {
 
 func executeTool() mcplib.Tool {
 	return mcplib.NewTool("execute",
-		mcplib.WithDescription("Execute an arbitrary backctl CLI command. Use this for advanced queries not covered by the other tools (e.g. 'catalog facets --facet spec.type', 'catalog ancestry component:default/my-service', 'locations list'). Run without arguments to see available commands."),
+		mcplib.WithDescription("Execute an arbitrary backctl CLI command. Use this for advanced queries not covered by the other tools (e.g. 'catalog facets --facet spec.type', 'catalog ancestry component:default/my-service', 'locations list'). Allowed subcommands: catalog, search, techdocs, relations, locations, version."),
 		mcplib.WithString("command",
 			mcplib.Required(),
 			mcplib.Description("The backctl subcommand and arguments (e.g. 'catalog facets --facet spec.type')"),
