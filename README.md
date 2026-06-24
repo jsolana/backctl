@@ -207,7 +207,7 @@ backctl completion fish | source
 
 ## MCP Integration
 
-backctl includes `backctl-mcp`, a Model Context Protocol server that exposes the Backstage catalog to AI agents (Cursor, Claude Desktop, etc.) via stdio transport. It runs as a Docker container for sandboxed execution.
+backctl includes `backctl-mcp`, a Model Context Protocol server that exposes the Backstage catalog to AI agents (Cursor, Claude Desktop, etc.). It supports two transports: **stdio** (default, for local IDE integration) and **HTTP** (for shared or remote deployments).
 
 <div align="center">
   <img src="./docs/assets/mcp-demo.gif" alt="mcp backctl demo" width="400" heigh="600" />
@@ -230,8 +230,10 @@ The MCP server is configured entirely through environment variables:
 | `BACKSTAGE_URL` | Yes | Base URL of the Backstage instance (e.g. `https://backstage.example.com`) |
 | `BACKSTAGE_TOKEN` | No | Bearer token for Backstage API authentication |
 | `BACKSTAGE_TIMEOUT` | No | HTTP request timeout (default: `30s`) |
+| `MCP_TRANSPORT` | No | Transport to use: `stdio` (default) or `http` |
+| `MCP_HTTP_ADDR` | No | Address to listen on in HTTP mode (default: `:8080`) |
 
-### IDE configuration (Cursor)
+### IDE configuration (Cursor) — stdio transport
 
 Add the following to your MCP settings (`.cursor/mcp.json` or global settings):
 
@@ -245,8 +247,7 @@ Add the following to your MCP settings (`.cursor/mcp.json` or global settings):
         "-e", "BACKSTAGE_URL=https://backstage.example.com",
         "-e", "BACKSTAGE_TOKEN=your-token-here",
         "ghcr.io/jsolana/backctl-mcp:0.1.1"
-      ],
-      "transportType": "stdio"
+      ]
     }
   }
 }
@@ -264,14 +265,41 @@ Alternatively, forward the variables from your shell environment instead of hard
         "-e", "BACKSTAGE_URL",
         "-e", "BACKSTAGE_TOKEN",
         "ghcr.io/jsolana/backctl-mcp:0.1.1"
-      ],
-      "transportType": "stdio"
+      ]
     }
   }
 }
 ```
 
 Ensure `BACKSTAGE_URL` and `BACKSTAGE_TOKEN` are set in your shell before launching the IDE.
+
+### IDE configuration (Cursor) — HTTP transport
+
+When the server is already running (e.g. deployed centrally), connect to it via URL:
+
+```json
+{
+  "mcpServers": {
+    "backctl-mcp": {
+      "url": "http://your-host:8080/mcp"
+    }
+  }
+}
+```
+
+### Running the server in HTTP mode
+
+Start the server with `MCP_TRANSPORT=http` and publish the port:
+
+```sh
+docker run --rm -p 8080:8080 \
+  -e MCP_TRANSPORT=http \
+  -e BACKSTAGE_URL=https://backstage.example.com \
+  -e BACKSTAGE_TOKEN=your-token-here \
+  ghcr.io/jsolana/backctl-mcp:0.1.1
+```
+
+The server exposes a single endpoint at `/mcp` that accepts `POST` (requests), `GET` (event stream), and `DELETE` (session termination) as per the [MCP Streamable HTTP spec (2025-03-26)](https://modelcontextprotocol.io/specification/2025-03-26/basic/transports#streamable-http).
 
 ### Available tools
 
@@ -291,7 +319,13 @@ For local development, you can run the MCP server directly:
 
 ```sh
 make build-mcp
+
+# stdio (default)
 BACKSTAGE_URL=https://backstage.example.com BACKSTAGE_TOKEN=xxx ./bin/backctl-mcp
+
+# HTTP
+BACKSTAGE_URL=https://backstage.example.com BACKSTAGE_TOKEN=xxx \
+MCP_TRANSPORT=http ./bin/backctl-mcp
 ```
 
 ## Pending / Roadmap
