@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"net/url"
+	"strings"
 
 	"github.com/jsolana/backctl/internal/client"
 )
@@ -25,13 +26,15 @@ type SearchOptions struct {
 }
 
 type SearchResultSummary struct {
-	Ref       string `json:"ref"`
-	Title     string `json:"title"`
-	Kind      string `json:"kind,omitempty"`
-	Type      string `json:"type,omitempty"`
-	Owner     string `json:"owner,omitempty"`
-	Lifecycle string `json:"lifecycle,omitempty"`
-	Snippet   string `json:"snippet,omitempty"`
+	Ref        string `json:"ref"`
+	ResultType string `json:"resultType,omitempty"`
+	Title      string `json:"title"`
+	Kind       string `json:"kind,omitempty"`
+	Type       string `json:"type,omitempty"`
+	Owner      string `json:"owner,omitempty"`
+	Lifecycle  string `json:"lifecycle,omitempty"`
+	Location   string `json:"location,omitempty"`
+	Snippet    string `json:"snippet,omitempty"`
 }
 
 type SearchOutput struct {
@@ -75,13 +78,15 @@ func (s *SearchService) Query(ctx context.Context, opts SearchOptions) (*SearchO
 		}
 
 		output.Results = append(output.Results, SearchResultSummary{
-			Ref:       ref,
-			Title:     r.Document.Title,
-			Kind:      r.Document.Kind,
-			Type:      r.Document.Type,
-			Owner:     r.Document.Owner,
-			Lifecycle: r.Document.Lifecycle,
-			Snippet:   snippet,
+			Ref:        ref,
+			ResultType: r.Type,
+			Title:      r.Document.Title,
+			Kind:       r.Document.Kind,
+			Type:       r.Document.Type,
+			Owner:      r.Document.Owner,
+			Lifecycle:  r.Document.Lifecycle,
+			Location:   extractDocsPath(r.Document.Location, r.Document.Kind, r.Document.Namespace, r.Document.Name),
+			Snippet:    snippet,
 		})
 	}
 
@@ -97,4 +102,21 @@ func buildRef(doc SearchDocument) string {
 		ns = "default"
 	}
 	return fmt.Sprintf("%s:%s/%s", doc.Kind, ns, doc.Name)
+}
+
+func extractDocsPath(location, kind, namespace, name string) string {
+	if kind == "" || name == "" {
+		return ""
+	}
+	ns := namespace
+	if ns == "" {
+		ns = "default"
+	}
+	prefix := fmt.Sprintf("/docs/%s/%s/%s/", ns, strings.ToLower(kind), name)
+	lower := strings.ToLower(location)
+	idx := strings.Index(lower, strings.ToLower(prefix))
+	if idx == -1 {
+		return ""
+	}
+	return strings.TrimRight(location[idx+len(prefix):], "/")
 }

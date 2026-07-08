@@ -40,7 +40,7 @@ func NewServer(httpClient *client.Client, version string) *server.MCPServer {
 
 func searchTool() mcplib.Tool {
 	return mcplib.NewTool("search",
-		mcplib.WithDescription("Search the Backstage catalog and TechDocs by free-text query. Returns lightweight summaries with entity refs that can be used with get_entity or get_techdocs_page."),
+		mcplib.WithDescription("Search the Backstage catalog and TechDocs by free-text query. Returns lightweight summaries including a 'resultType' field ('software-catalog' or 'techdocs') and an entity 'ref'. For techdocs results, 'location' contains the page path to pass to get_techdocs_page; if 'location' is absent, the result points to the index page."),
 		mcplib.WithString("query",
 			mcplib.Required(),
 			mcplib.Description("Free-text search term (e.g. 'journey finished event', 'payment service', 'onboarding guide')"),

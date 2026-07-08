@@ -40,7 +40,7 @@ curl -sSfL https://raw.githubusercontent.com/jsolana/backctl/main/install.sh | b
 Install a specific version:
 
 ```sh
-curl -sSfL https://raw.githubusercontent.com/jsolana/backctl/main/install.sh | bash -s -- -v v0.2.0
+curl -sSfL https://raw.githubusercontent.com/jsolana/backctl/main/install.sh | bash -s -- -v v0.2.2
 ```
 
 Install to a custom directory (no sudo required):
@@ -246,7 +246,7 @@ Add the following to your MCP settings (`.cursor/mcp.json` or global settings):
         "run", "--rm", "-i",
         "-e", "BACKSTAGE_URL=https://backstage.example.com",
         "-e", "BACKSTAGE_TOKEN=your-token-here",
-        "ghcr.io/jsolana/backctl-mcp:0.2.0"
+        "ghcr.io/jsolana/backctl-mcp:0.2.2"
       ]
     }
   }
@@ -264,7 +264,7 @@ Alternatively, forward the variables from your shell environment instead of hard
         "run", "--rm", "-i",
         "-e", "BACKSTAGE_URL",
         "-e", "BACKSTAGE_TOKEN",
-        "ghcr.io/jsolana/backctl-mcp:0.2.0"
+        "ghcr.io/jsolana/backctl-mcp:0.2.2"
       ]
     }
   }
@@ -296,7 +296,7 @@ docker run --rm -p 8080:8080 \
   -e MCP_TRANSPORT=http \
   -e BACKSTAGE_URL=https://backstage.example.com \
   -e BACKSTAGE_TOKEN=your-token-here \
-  ghcr.io/jsolana/backctl-mcp:0.2.0
+  ghcr.io/jsolana/backctl-mcp:0.2.2
 ```
 
 The server exposes a single endpoint at `/mcp` that accepts `POST` (requests), `GET` (event stream), and `DELETE` (session termination) as per the [MCP Streamable HTTP spec (2025-03-26)](https://modelcontextprotocol.io/specification/2025-03-26/basic/transports#streamable-http).
